@@ -1,4 +1,4 @@
-use ribir::prelude::*;
+use ribir::prelude::{*, svgs::CLOSE};
 
 #[derive(Debug, Clone, PartialEq)]
 struct Task {
@@ -104,8 +104,8 @@ impl TodoMVP {
       track { this, this2: this.clone() }
       VScrollBar {
         background: Brush::Color(Color::BURLYWOOD),
-        Column {
-          align_items: Align::Start,
+        Lists {
+          // align_items: Align::Start,
           padding: EdgeInsets::all(8.),
           DynWidget {
             dyns: this.tasks.iter()
@@ -114,22 +114,24 @@ impl TodoMVP {
               let checked = task.finished;
               let label = task.label.clone();
               widget! {
-                Stack {
+                ListItem {
                   id: item,
-                  Checkbox {
-                    id: checkbox,
-                    checked,
-                    margin: EdgeInsets::vertical(4.),
-                    h_align: HAlign::Stretch,
-                    Label { desc: label }
+                  HeadlineText(label)
+                  Leading {
+                    Checkbox {
+                      id: checkbox,
+                      checked,
+                      margin: EdgeInsets::vertical(4.),
+                    }
                   }
-                  Icon {
-                    visible: item.mouse_hover(),
-                    h_align: HAlign::Right,
-                    tap: move |_| {
-                       this2.tasks.remove(idx);
-                    },
-                    DynWidget { dyns: svgs::CLOSE }
+                  Trailing {
+                    Icon {
+                      visible: item.mouse_hover(),
+                      tap: move |_| {
+                          this2.tasks.remove(idx);
+                      },
+                      svgs::CLOSE
+                    }
                   }
                 }
                 on checkbox.checked { change: move |(_, after)| this2.silent().tasks[idx].finished = after }
