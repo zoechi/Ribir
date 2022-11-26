@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use ribir_core::{prelude::*};
+use ribir_core::prelude::*;
 
 #[derive(Declare, Default)]
 pub struct Lists {
@@ -41,42 +41,42 @@ impl ComposeStyle for ListItemStyle {
 pub struct HeadlineText(pub String);
 pub struct SupportingText(pub String);
 
-#[derive(Default, Declare)]
-pub struct ListItem;
-
 #[derive(Template)]
-pub struct ListItemTemplate {
+pub struct ListItem {
   headline_text: HeadlineText,
   supporting_text: Option<SupportingText>,
   leading: Option<WidgetOf<Leading>>,
   trailing: Option<WidgetOf<Trailing>>,
 }
 
-impl ComposeChild for ListItem {
-  type Child = ListItemTemplate;
-
-  fn compose_child(_this: StateWidget<Self>, child: Self::Child) -> Widget {
-    let ListItemTemplate { headline_text, supporting_text, leading, trailing } = child;
-
+impl Compose for ListItem {
+  fn compose(this: StateWidget<Self>) -> Widget
+  where
+    Self: Sized,
+  {
+    let this = match this {
+      StateWidget::Stateless(this) => this,
+      StateWidget::Stateful(_) => unreachable!("ListItem should never be stateful"),
+    };
     widget! {
       Row {
         DynWidget {
-          dyns: leading.map(|w| w.child)
+          dyns: this.leading.map(|w| w.child)
         }
         Expanded {
           flex: 1.,
-          
+
           Column {
             border: Border::only_bottom(BorderSide { width:1., color: Palette::of(ctx).primary() }),
             DynWidget {
               dyns: widget! {
                 Text {
-                  text: headline_text.0
+                  text: this.headline_text.0
                 }
               }
             }
             DynWidget {
-              dyns: supporting_text.map(|text| {
+              dyns: this.supporting_text.map(|text| {
                 widget! {
                   Text {
                     text: text.0
@@ -87,12 +87,11 @@ impl ComposeChild for ListItem {
           }
         }
         DynWidget {
-          dyns: trailing.map(|w| w.child)
+          dyns: this.trailing.map(|w| w.child)
         }
       }
     }
   }
-
 }
 
 impl ComposeChild for Lists {

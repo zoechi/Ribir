@@ -107,36 +107,14 @@ impl TodoMVP {
         Lists {
           // align_items: Align::Start,
           padding: EdgeInsets::all(8.),
-          DynWidget {
-            dyns: this.tasks.iter()
-              .filter(|task| { cond(task) })
-              .enumerate().map(|(idx, task)| {
-              let checked = task.finished;
-              let label = task.label.clone();
-              widget! {
-                ListItem {
-                  id: item,
-                  HeadlineText(label)
-                  Leading {
-                    Checkbox {
-                      id: checkbox,
-                      checked,
-                      margin: EdgeInsets::vertical(4.),
-                    }
-                  }
-                  Trailing {
-                    Icon {
-                      visible: item.mouse_hover(),
-                      tap: move |_| {
-                          this2.tasks.remove(idx);
-                      },
-                      svgs::CLOSE
-                    }
-                  }
-                }
-                on checkbox.checked { change: move |(_, after)| this2.silent().tasks[idx].finished = after }
+          ListItem {
+            HeadlineText(String::from("text"))
+            SupportingText(String::from("lll"))
+            Leading {
+              Icon {
+                svgs::CLOSE
               }
-            }).collect::<Vec<_>>()
+            }
           }
         }
       }
